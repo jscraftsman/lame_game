@@ -80,8 +80,8 @@ function startGame(){
 		CURRENT_PLAYER = 0;
 		showWhosTurn();
 		showAllPlayers();
-		document.getElementById("main_menu_container").hidden = true;
-		document.getElementById("ingame_menu_container").hidden = false;
+		document.getElementById("main_menu_container").style.display = "none";
+		document.getElementById("ingame_menu_container").style.display = "block";
 	}
 	  
 }
@@ -123,18 +123,18 @@ function process(action){
 	}
 }
 function hideOptions(option){
-	document.getElementById(option + "_options").hidden = true;
+	document.getElementById(option + "_options").style.display = "none";
 }
 function showOptions(option){
-	document.getElementById(option + "_options").hidden = false;
+	document.getElementById(option + "_options").style.display = "block";
 }
 function RandomNumber(){
 	return (Math.floor(Math.random()*101));
 }
 function showMenu(){
 	setMessage("Having fun?");
-	document.getElementById("main_menu_container").hidden = false;
-	document.getElementById("ingame_menu_container").hidden = true;
+	document.getElementById("main_menu_container").style.display = "block";
+	document.getElementById("ingame_menu_container").style.display = "none";
 }
 function showWhosTurn(){
 	setMessage(PLAYERS[CURRENT_PLAYER].name + "'s turn");
@@ -209,7 +209,7 @@ function attackPlayer(target){
     </div>
 
 	
-	<div id="ingame_menu_container" class="center" hidden="true">
+	<div id="ingame_menu_container" class="center" style="display:none;">
 		<div id="buttons">
 			<button onClick="showOptions(OPTIONS.gym)" 			id="gym_btn">Gym</button>
 			<button onClick="showOptions(OPTIONS.school)" 		id="school_btn">School</button>
@@ -220,14 +220,14 @@ function attackPlayer(target){
 			<button onClick="showOptions(OPTIONS.church)" 		id="church_btn">Church</button>
 		</div>
 		
-		<div id="gym_options" hidden="true">
+		<div id="gym_options" style="display:none;">
 			<h2>Gym</h2>
 			<p>Add damage by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.train)" id="train_btn">Train</button>
 			<button onClick="hideOptions(OPTIONS.gym)">Cancel</button>
 		</div>
 		
-		<div id="school_options" hidden="true">
+		<div id="school_options" style="display:none;">
 			<h2>School</h2>
 			<p>Add int by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.study)" id="study_btn">Study</button>
