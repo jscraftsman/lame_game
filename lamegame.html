@@ -33,6 +33,10 @@
 		#players_text_list h1{
 			color: blue;
 		}
+		
+		#allplayers span{
+			display: inline-block;
+		}
 	</style>
 
 <script type="text/javascript">
@@ -48,7 +52,7 @@
 		"DEFAULT_GOLD" 			: 20,
 		"DEFAULT_DAMAGE" 		: 1,
 		"DEFAULT_INT" 			: 1,
-		"DEFAULT_HP" 			: 1,
+		"DEFAULT_HP" 			: 3,
 		"DEFAULT_BANK" 			: 0,
 		"DEFAULT_PRAY_WAIT"		: 2,
 		"DEFAULT_TURN_WAIT"		: 2,
@@ -152,12 +156,14 @@ function showPlayerTextList(){
 function showAllPlayers(){
 	var output = "<br /><hr /><br />";
 	for(var index = 0; index < PLAYERS.length; index++){
-		output += "<table border='1' class='center'><tr><th class='center' colspan='2'>" + PLAYERS[index].name + "</th></tr>";
+		output += "<span><table border='1' class='center'><tr><th class='center' colspan='2'> " + PLAYERS[index].name + "</th></tr>";
 		output += "<tr><td>Gold: " + PLAYERS[index].gold + "</td><td>DMG: " + PLAYERS[index].damage + "</td></tr>";
 		output += "<tr><td>Bank: " + PLAYERS[index].bank + "</td><td>INT: " + PLAYERS[index].intelligence + "</td></tr>";
-		output += "<tr><td class='center' colspan='2'>HP: " + PLAYERS[index].current_hp + "/" + PLAYERS[index].max_hp + "</td></tr>";
+		output += "<tr><td class='center' colspan='2'>HP: " + PLAYERS[index].current_hp + "/" + PLAYERS[index].max_hp + " </td></tr>";
+		output += "<tr><td class='center' colspan='2'>Pray wait: " + PLAYERS[index].pray_wait + " </td></tr>";
+		output += "<tr><td class='center' colspan='2'>Turn wait: " + PLAYERS[index].turn_wait + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'><button onClick='attackPlayer(" + index + ")'>Attack</button></td></tr>";
-		output += "</table><br />";
+		output += "</table></span>";
 	}
 	document.getElementById("allplayers").innerHTML = output;
 }
@@ -206,6 +212,7 @@ function attackPlayer(target){
 			<h1 class="center">Players:</h1>
 			<p id="playerlist" class="center"><small>None so far.. Why don't you add one?</small></p>
 		</div>
+
     </div>
 
 	
@@ -234,8 +241,7 @@ function attackPlayer(target){
 			<button onClick="hideOptions(OPTIONS.school)">Cancel</button>
 		</div>
 		
-		<p id="allplayers" class="center"></p>
-		
+		<div id="allplayers" class="center"></div>
 		
 		<br /><hr/><br />
 		<button onClick="showMenu()">Menu</button>
