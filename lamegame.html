@@ -63,11 +63,14 @@
 	var OPTIONS = { 
 		"gym" 		: "gym", 
 		"school" 	: "school",
-		"company" 	: 2,
-		"restaurant": 3,
-		"hospital" 	: 4, 
-		"bank" 		: 5, 
-		"church" 	: 6};
+		"company" 	: "company",
+		"restaurant": "restaurant",
+		"hospital" 	: "hospital", 
+		"bank" 		: "bank", 
+		"church" 	: "church",
+		"streets" 	: "streets",
+		"prison" 	: "prison"
+		};
 	var ACTIONS = { 
 		"train" : "train",
 		"study" : "study"
@@ -220,11 +223,13 @@ function attackPlayer(target){
 		<div id="buttons">
 			<button onClick="showOptions(OPTIONS.gym)" 			id="gym_btn">Gym</button>
 			<button onClick="showOptions(OPTIONS.school)" 		id="school_btn">School</button>
-			<button onClick="showOptions(OPTIONS.company)" 		id="company_btn">Company</button>		
 			<button onClick="showOptions(OPTIONS.restaurant)" 	id="restaurant_btn">Restaurant</button>
+			<button onClick="showOptions(OPTIONS.company)" 		id="company_btn">Company</button>		
 			<button onClick="showOptions(OPTIONS.hospital)" 	id="hospital_btn">Hospital</button>
 			<button onClick="showOptions(OPTIONS.bank)" 		id="bank_btn">Bank</button>
 			<button onClick="showOptions(OPTIONS.church)" 		id="church_btn">Church</button>
+			<button onClick="showOptions(OPTIONS.streets)" 		id="church_btn">Streets</button>
+			<button onClick="showOptions(OPTIONS.prison)" 		id="church_btn">Prison</button>
 		</div>
 		
 		<div id="gym_options" style="display:none;">
@@ -239,6 +244,57 @@ function attackPlayer(target){
 			<p>Add int by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.study)" id="study_btn">Study</button>
 			<button onClick="hideOptions(OPTIONS.school)">Cancel</button>
+		</div>
+		
+		<div id="restaurant_options" style="display:none;">
+			<h2>Restaurant</h2>
+			<p>Add max hp by 1. Cost is 5 gold</p>
+			<button onClick="process(ACTIONS.eat)">Eat</button>
+			<button onClick="hideOptions(OPTIONS.restaurant)">Cancel</button>
+		</div>
+		
+		<div id="company_options" style="display:none;">
+			<h2>Company</h2>
+			<p>Add gold by 5. Req int is 3</p>
+			<button onClick="process(ACTIONS.work)">Work</button>
+			<button onClick="hideOptions(OPTIONS.company)">Cancel</button>
+		</div>
+		
+		<div id="hospital_options" style="display:none;">
+			<h2>Hospital</h2>
+			<p>Restore HP</p>
+			<button onClick="process(ACTIONS.heal)">Heal</button>
+			<button onClick="hideOptions(OPTIONS.hospital)">Cancel</button>
+		</div>
+		
+		<div id="bank_options" style="display:none;">
+			<h2>Bank</h2>
+			<p>Rob. Deposit or Withdraw</p>
+			<button onClick="process(ACTIONS.rob)">Rob</button>
+			<button onClick="process(ACTIONS.deposit)">Deposit</button>
+			<button onClick="process(ACTIONS.withdraw)">Withdraw</button>
+			<button onClick="hideOptions(OPTIONS.bank)">Cancel</button>
+		</div>
+		
+		<div id="church_options" style="display:none;">
+			<h2>Church</h2>
+			<p>Pray</p>
+			<button onClick="process(ACTIONS.pray)">Pray</button>
+			<button onClick="hideOptions(OPTIONS.church)">Cancel</button>
+		</div>
+		
+		<div id="streets_options" style="display:none;">
+			<h2>Streets</h2>
+			<p>Beg</p>
+			<button onClick="process(ACTIONS.beg)">Beg</button>
+			<button onClick="hideOptions(OPTIONS.streets)">Cancel</button>
+		</div>
+		
+		<div id="prison_options" style="display:none;">
+			<h2>prison</h2>
+			<p>Escape</p>
+			<button onClick="process(ACTIONS.escape)">Escape</button>
+			<button onClick="hideOptions(OPTIONS.prison)">Cancel</button>
 		</div>
 		
 		<div id="allplayers" class="center"></div>
