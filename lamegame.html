@@ -1,0 +1,249 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>Lame game</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<style>
+		*{
+			margin: 0;
+			padding: 0;
+		}
+		.center{
+			margin: 0 auto;
+			text-align: center;
+		}
+		#header{
+			float: right;
+		}
+		#message{
+			clear:both;
+			text-align: center;
+			color: green;
+		}
+		.container{  
+
+		}
+		.content{
+			margin: 0 auto;
+			width: 240px;  
+			background: #eee;
+		}
+
+		#players_text_list h1{
+			color: blue;
+		}
+	</style>
+
+<script type="text/javascript">
+	///-------------------------------------------------------///
+	/*
+	@TODO: 
+	1. allow only a unique name
+	2. fix the "Uncaught TypeError: Cannot read property 'length' of null " - when you cancel adding player
+	*/
+	///-------------------------------------------------------///
+
+	var SETTINGS = {
+		"DEFAULT_GOLD" 			: 20,
+		"DEFAULT_DAMAGE" 		: 1,
+		"DEFAULT_INT" 			: 1,
+		"DEFAULT_HP" 			: 1,
+		"DEFAULT_BANK" 			: 0,
+		"DEFAULT_PRAY_WAIT"		: 2,
+		"DEFAULT_TURN_WAIT"		: 2,
+		"DEFAULT_ACTION_POINTS"	: 1,
+		"TRAIN_COST" 			: 5,
+		"STUDY_COST" 			: 5,
+		};
+	var OPTIONS = { 
+		"gym" 		: "gym", 
+		"school" 	: "school",
+		"company" 	: 2,
+		"restaurant": 3,
+		"hospital" 	: 4, 
+		"bank" 		: 5, 
+		"church" 	: 6};
+	var ACTIONS = { 
+		"train" : "train",
+		"study" : "study"
+		};
+	var PLAYERS = [];
+	var CURRENT_PLAYER = 0;
+	var WINNER = "~none~";
+
+
+function startGame(){
+	if (PLAYERS.length < 2){
+		alert("Please add at least two player!");
+	}else{
+		CURRENT_PLAYER = 0;
+		showWhosTurn();
+		showAllPlayers();
+		document.getElementById("main_menu_container").hidden = true;
+		document.getElementById("ingame_menu_container").hidden = false;
+	}
+	  
+}
+function setNextPlayer(){
+	PLAYERS[CURRENT_PLAYER].action_points--;
+	if(PLAYERS[CURRENT_PLAYER].action_points <= 0){
+		PLAYERS[CURRENT_PLAYER].action_points = (PLAYERS[CURRENT_PLAYER].intelligence/3);
+		CURRENT_PLAYER++;
+		if (CURRENT_PLAYER >= PLAYERS.length){
+			CURRENT_PLAYER = 0;
+		}
+		showWhosTurn();
+		showAllPlayers();
+	}else{
+		setMessage("Still, " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
+	}
+	
+}
+function process(action){
+	switch(action){
+		case ACTIONS.train:
+			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.TRAIN_COST){
+				PLAYERS[CURRENT_PLAYER].damage++;
+				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.TRAIN_COST;
+				setNextPlayer();
+			}else{
+				alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough gold!");
+			}
+		break;
+		case ACTIONS.study:
+			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.STUDY_COST){
+				PLAYERS[CURRENT_PLAYER].intelligence++;
+				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.STUDY_COST;
+				setNextPlayer();
+			}else{
+				alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough gold!");
+			}
+		break;
+	}
+}
+function hideOptions(option){
+	document.getElementById(option + "_options").hidden = true;
+}
+function showOptions(option){
+	document.getElementById(option + "_options").hidden = false;
+}
+function RandomNumber(){
+	return (Math.floor(Math.random()*101));
+}
+function showMenu(){
+	setMessage("Having fun?");
+	document.getElementById("main_menu_container").hidden = false;
+	document.getElementById("ingame_menu_container").hidden = true;
+}
+function showWhosTurn(){
+	setMessage(PLAYERS[CURRENT_PLAYER].name + "'s turn");
+}
+function setMessage(message){
+	document.getElementById("message").innerHTML = message;
+}
+function showPlayerTextList(){
+	var output = "";
+	for(var index = 0; index < PLAYERS.length; index++){
+		output += PLAYERS[index].name + "<br />";
+	}
+	document.getElementById("playerlist").innerHTML = output;
+}
+function showAllPlayers(){
+	var output = "<br /><hr /><br />";
+	for(var index = 0; index < PLAYERS.length; index++){
+		output += "<table border='1' class='center'><tr><th class='center' colspan='2'>" + PLAYERS[index].name + "</th></tr>";
+		output += "<tr><td>Gold: " + PLAYERS[index].gold + "</td><td>DMG: " + PLAYERS[index].damage + "</td></tr>";
+		output += "<tr><td>Bank: " + PLAYERS[index].bank + "</td><td>INT: " + PLAYERS[index].intelligence + "</td></tr>";
+		output += "<tr><td class='center' colspan='2'>HP: " + PLAYERS[index].current_hp + "/" + PLAYERS[index].max_hp + "</td></tr>";
+		output += "<tr><td class='center' colspan='2'><button onClick='attackPlayer(" + index + ")'>Attack</button></td></tr>";
+		output += "</table><br />";
+	}
+	document.getElementById("allplayers").innerHTML = output;
+}
+function addPlayer(){
+	var name = prompt("Enter the player's name", "Player");
+	if(name.length > 10){
+		alert("Only 10 characters!");
+		addPlayer();
+	}else{
+		if (name!=null){
+			PLAYERS.push({
+				"name" 			: name, 
+				"gold"			: SETTINGS.DEFAULT_GOLD, 
+				"damage" 		: SETTINGS.DEFAULT_DAMAGE,
+				"current_hp"	: SETTINGS.DEFAULT_HP,
+				"max_hp"		: SETTINGS.DEFAULT_HP,
+				"intelligence"	: SETTINGS.DEFAULT_INT,
+				"bank"			: SETTINGS.DEFAULT_BANK,
+				"pray_wait"		: SETTINGS.DEFAULT_PRAY_WAIT,
+				"turn_wait"		: SETTINGS.DEFAULT_TURN_WAIT,
+				"action_points"	: SETTINGS.DEFAULT_ACTION_POINTS,
+			});
+			showPlayerTextList();
+		}
+	}
+ }
+function attackPlayer(target){
+	 PLAYERS[target].current_hp -= PLAYERS[CURRENT_PLAYER].damage;
+	 setNextPlayer();
+}
+</script>
+
+</head>
+<body>
+
+<div class="container">
+  <div class="content">
+    <span>
+    <small id="header">Lame Game v0.1</small>
+    <h1 id="message">Welcome!</h1>
+    </span>
+    <div id="main_menu_container" class="center">
+		<button onClick="addPlayer()">Add Player</button><br />
+		<button onClick="startGame()">Start Game</button>
+		<div id="players_text_list">
+			<h1 class="center">Players:</h1>
+			<p id="playerlist" class="center"><small>None so far.. Why don't you add one?</small></p>
+		</div>
+    </div>
+
+	
+	<div id="ingame_menu_container" class="center" hidden="true">
+		<div id="buttons">
+			<button onClick="showOptions(OPTIONS.gym)" 			id="gym_btn">Gym</button>
+			<button onClick="showOptions(OPTIONS.school)" 		id="school_btn">School</button>
+			<button onClick="showOptions(OPTIONS.company)" 		id="company_btn">Company</button>		
+			<button onClick="showOptions(OPTIONS.restaurant)" 	id="restaurant_btn">Restaurant</button>
+			<button onClick="showOptions(OPTIONS.hospital)" 	id="hospital_btn">Hospital</button>
+			<button onClick="showOptions(OPTIONS.bank)" 		id="bank_btn">Bank</button>
+			<button onClick="showOptions(OPTIONS.church)" 		id="church_btn">Church</button>
+		</div>
+		
+		<div id="gym_options" hidden="true">
+			<h2>Gym</h2>
+			<p>Add damage by 1. Cost is 5 gold</p>
+			<button onClick="process(ACTIONS.train)" id="train_btn">Train</button>
+			<button onClick="hideOptions(OPTIONS.gym)">Cancel</button>
+		</div>
+		
+		<div id="school_options" hidden="true">
+			<h2>School</h2>
+			<p>Add int by 1. Cost is 5 gold</p>
+			<button onClick="process(ACTIONS.study)" id="study_btn">Study</button>
+			<button onClick="hideOptions(OPTIONS.school)">Cancel</button>
+		</div>
+		
+		<p id="allplayers" class="center"></p>
+		
+		
+		<br /><hr/><br />
+		<button onClick="showMenu()">Menu</button>
+		<br /><br />
+	</div>
+  
+  </div>
+</div>
+
+</body>
+</html>
