@@ -156,6 +156,12 @@ function hideOptions(option){
 }
 function showOptions(option){
 	document.getElementById(option + "_options").style.display = "block";
+	showOnlyOneOption(option);
+}
+function showOnlyOneOption(selected){
+	for(option in OPTIONS){
+		document.getElementById(option + "_options").style.display = ( (option == selected) ? "block" : "none");
+	}
 }
 function RandomNumber(){
 	return (Math.floor(Math.random()*101));
