@@ -49,6 +49,7 @@
 	3. complete the attack function
   4. when you press menu->start the stats should be reset
   5. player should not be able to attack himself
+  6. display the action of the previous player
 	*/
 	///-------------------------------------------------------///
 
@@ -117,14 +118,22 @@ function startGame(){
 	}
 
 }
+function cyclePlayer(){
+		CURRENT_PLAYER++;
+		if (CURRENT_PLAYER >= PLAYERS.length){
+			CURRENT_PLAYER = 0;
+    }
+}
 function setNextPlayer(){
 	PLAYERS[CURRENT_PLAYER].energy--;
 	if(PLAYERS[CURRENT_PLAYER].energy <= 0){
     PLAYERS[CURRENT_PLAYER].energy = (PLAYERS[CURRENT_PLAYER].intelligence >= 6 ? 2 :1);
-		CURRENT_PLAYER++;
-		if (CURRENT_PLAYER >= PLAYERS.length){
-			CURRENT_PLAYER = 0;
-		}
+    cyclePlayer();
+    if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+      alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
+      PLAYERS[CURRENT_PLAYER].turn_wait--;
+      cyclePlayer();
+    }
 		showAllPlayers();
 		showWhosTurn();
 	}else{
@@ -173,7 +182,21 @@ function process(action){
         notEnough("int");
 			}
 		break;
+    case ACTIONS.rob:
+      if(success(SETTINGS.ROB_CHANCE)){
+        PLAYERS[CURRENT_PLAYER].gold += SETTINGS.ROB_GAIN;
+        alert("Success!");
+      }else{
+        PLAYERS[CURRENT_PLAYER].turn_wait += SETTINGS.TURN_WAIT;
+        PLAYERS[CURRENT_PLAYER].gold = 0;
+        alert("You were caught!");
+      }
+			setNextPlayer();
+    break;
 	}
+}
+function success(chance){
+  return ((RandomNumber() <= chance) ? true : false);
 }
 function hideOptions(option){
 	document.getElementById(option + "_options").style.display = "none";
