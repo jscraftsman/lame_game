@@ -21,20 +21,21 @@
 			text-align: center;
 			color: green;
 		}
-		.container{  
+		.container{
 
 		}
 		.content{
 			margin: 0 auto;
-			width: 240px;  
+			width: 240px;
 			background: #eee;
 		}
 
 		#players_text_list h1{
 			color: blue;
 		}
-		
-		#allplayers span{
+
+    #allplayers span{
+      width: 49%;
 			display: inline-block;
 		}
 	</style>
@@ -42,49 +43,51 @@
 <script type="text/javascript">
 	///-------------------------------------------------------///
 	/*
-	@TODO: 
+	@TODO:
 	1. allow only a unique name
 	2. fix the "Uncaught TypeError: Cannot read property 'length' of null " - when you cancel adding player
 	3. complete the attack function
+  4. when you press menu->start the stats should be reset
+  5. player should not be able to attack himself
 	*/
 	///-------------------------------------------------------///
 
 	var SETTINGS = {
-		"DEFAULT_GOLD" 			: 20,
-		"DEFAULT_DAMAGE" 		: 1,
-		"DEFAULT_INT" 			: 1,
-		"DEFAULT_HP" 			: 3,
-		"DEFAULT_BANK" 			: 0,
-		"DEFAULT_PRAY_WAIT"		: 2,
-		"DEFAULT_TURN_WAIT"		: 2,
-		"DEFAULT_ACTION_POINTS"	: 1,
-		"TRAIN_COST" 			: 5,
-		"TRAIN_DMG_ADD" 		: 1,
-		"STUDY_COST" 			: 5,
-		"STUDY_INT_ADD" 		: 1,
-		"EAT_COST" 				: 5,
-		"EAT_HP_ADD" 			: 1,
-		"WORK_EARN" 			: 5,
-		"WORK_REQ_INT" 			: 3,
-		"ROB_GAIN" 				: 20,
-		"ROB_CHANCE" 			: 30,
-		"PRAY_CHANCE" 			: 10,
-		"ESCAPE_CHANCE" 		: 10,
-		"BEG_CHANCE" 			: 50,
+		"DEFAULT_GOLD" 	: 20,
+		"DEFAULT_DAMAGE": 1,
+		"DEFAULT_INT" 	: 1,
+		"DEFAULT_HP" 		: 3,
+		"DEFAULT_BANK"  : 0,
+		"DEFAULT_ENERGY": 1,
+		"TRAIN_COST" 	  : 5,
+		"TRAIN_DMG_ADD" : 1,
+		"STUDY_COST" 	  : 5,
+		"STUDY_INT_ADD" : 1,
+		"EAT_COST" 		  : 5,
+		"EAT_HP_ADD" 	  : 1,
+		"WORK_EARN" 	  : 5,
+		"WORK_REQ_INT"  : 3,
+		"ROB_GAIN" 		  : 20,
+		"ROB_CHANCE" 	  : 30,
+		"PRAY_CHANCE"   : 10,
+		"ESCAPE_CHANCE" : 10,
+		"BEG_CHANCE" 	  : 50,
+		"PRAY_WAIT"		  : 2,
+		"TURN_WAIT"		  : 2,
 		};
-	var OPTIONS = { 
-		"gym" 		: "gym", 
+	var OPTIONS = {
+		"gym" 		: "gym",
 		"school" 	: "school",
 		"company" 	: "company",
 		"restaurant": "restaurant",
-		"hospital" 	: "hospital", 
-		"bank" 		: "bank", 
+		"hospital" 	: "hospital",
+		"bank" 		: "bank",
 		"church" 	: "church",
 		"streets" 	: "streets",
 		"house" 	: "house",
 		"prison" 	: "prison"
 		};
-	var ACTIONS = { 
+	var ACTIONS = {
 		"train" : "train",
 		"study" : "study",
 		"eat" : "eat",
@@ -107,27 +110,30 @@ function startGame(){
 		alert("Please add at least two player!");
 	}else{
 		CURRENT_PLAYER = 0;
-		showWhosTurn();
 		showAllPlayers();
 		document.getElementById("main_menu_container").style.display = "none";
 		document.getElementById("ingame_menu_container").style.display = "block";
+    showWhosTurn();
 	}
-	  
+
 }
 function setNextPlayer(){
-	PLAYERS[CURRENT_PLAYER].action_points--;
-	if(PLAYERS[CURRENT_PLAYER].action_points <= 0){
-		PLAYERS[CURRENT_PLAYER].action_points = (PLAYERS[CURRENT_PLAYER].intelligence/3);
+	PLAYERS[CURRENT_PLAYER].energy--;
+	if(PLAYERS[CURRENT_PLAYER].energy <= 0){
+    PLAYERS[CURRENT_PLAYER].energy = (PLAYERS[CURRENT_PLAYER].intelligence >= 6 ? 2 :1);
 		CURRENT_PLAYER++;
 		if (CURRENT_PLAYER >= PLAYERS.length){
 			CURRENT_PLAYER = 0;
 		}
-		showWhosTurn();
 		showAllPlayers();
+		showWhosTurn();
 	}else{
-		setMessage("Still, " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
+		alert("It's Still " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
 	}
-	
+
+}
+function notEnough(stat){
+	alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough " + stat + "!");
 }
 function process(action){
 	switch(action){
@@ -137,8 +143,8 @@ function process(action){
 				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.TRAIN_COST;
 				setNextPlayer();
 			}else{
-				alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough gold!");
-			}
+        notEnough("gold");
+      }
 		break;
 		case ACTIONS.study:
 			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.STUDY_COST){
@@ -146,7 +152,25 @@ function process(action){
 				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.STUDY_COST;
 				setNextPlayer();
 			}else{
-				alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough gold!");
+        notEnough("gold");
+			}
+		break;
+		case ACTIONS.eat:
+			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.EAT_COST){
+				PLAYERS[CURRENT_PLAYER].current_hp++;
+				PLAYERS[CURRENT_PLAYER].max_hp++;
+				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.EAT_COST;
+				setNextPlayer();
+			}else{
+        notEnough("gold");
+			}
+		break;
+		case ACTIONS.work:
+			if(PLAYERS[CURRENT_PLAYER].intelligence >= SETTINGS.WORK_REQ_INT){
+				PLAYERS[CURRENT_PLAYER].gold += SETTINGS.WORK_EARN;
+				setNextPlayer();
+			}else{
+        notEnough("int");
 			}
 		break;
 	}
@@ -172,7 +196,8 @@ function showMenu(){
 	document.getElementById("ingame_menu_container").style.display = "none";
 }
 function showWhosTurn(){
-	setMessage(PLAYERS[CURRENT_PLAYER].name + "'s turn");
+  setMessage(PLAYERS[CURRENT_PLAYER].name + "'s turn");
+	alert(PLAYERS[CURRENT_PLAYER].name + "'s turn");
 }
 function setMessage(message){
 	document.getElementById("message").innerHTML = message;
@@ -191,6 +216,7 @@ function showAllPlayers(){
 		output += "<tr><td>Gold: " + PLAYERS[index].gold + "</td><td>DMG: " + PLAYERS[index].damage + "</td></tr>";
 		output += "<tr><td>Bank: " + PLAYERS[index].bank + "</td><td>INT: " + PLAYERS[index].intelligence + "</td></tr>";
 		output += "<tr><td class='center' colspan='2'>HP: " + PLAYERS[index].current_hp + "/" + PLAYERS[index].max_hp + " </td></tr>";
+		output += "<tr><td class='center' colspan='2'>Energy: " + PLAYERS[index].energy + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'>Pray wait: " + PLAYERS[index].pray_wait + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'>Turn wait: " + PLAYERS[index].turn_wait + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'><button onClick='attackPlayer(" + index + ")'>Attack</button></td></tr>";
@@ -206,16 +232,16 @@ function addPlayer(){
 	}else{
 		if (name!=null){
 			PLAYERS.push({
-				"name" 			: name, 
-				"gold"			: SETTINGS.DEFAULT_GOLD, 
-				"damage" 		: SETTINGS.DEFAULT_DAMAGE,
-				"current_hp"	: SETTINGS.DEFAULT_HP,
-				"max_hp"		: SETTINGS.DEFAULT_HP,
+				"name" 		  	  : name,
+				"gold"			    : SETTINGS.DEFAULT_GOLD,
+				"damage" 		    : SETTINGS.DEFAULT_DAMAGE,
+				"current_hp"	  : SETTINGS.DEFAULT_HP,
+				"max_hp"	    	: SETTINGS.DEFAULT_HP,
 				"intelligence"	: SETTINGS.DEFAULT_INT,
-				"bank"			: SETTINGS.DEFAULT_BANK,
-				"pray_wait"		: SETTINGS.DEFAULT_PRAY_WAIT,
-				"turn_wait"		: SETTINGS.DEFAULT_TURN_WAIT,
-				"action_points"	: SETTINGS.DEFAULT_ACTION_POINTS,
+				"bank"			    : SETTINGS.DEFAULT_BANK,
+				"pray_wait"		  : 0,
+				"turn_wait"		  : 0,
+				"energy"	      : SETTINGS.DEFAULT_ENERGY,
 			});
 			showPlayerTextList();
 		}
@@ -246,51 +272,51 @@ function attackPlayer(target){
 
     </div>
 
-	
+
 	<div id="ingame_menu_container" class="center" style="display:none;">
 		<div id="buttons">
-			<button onClick="showOptions(OPTIONS.gym)" 			id="gym_btn">Gym</button>
-			<button onClick="showOptions(OPTIONS.school)" 		id="school_btn">School</button>
-			<button onClick="showOptions(OPTIONS.restaurant)" 	id="restaurant_btn">Restaurant</button>
-			<button onClick="showOptions(OPTIONS.company)" 		id="company_btn">Company</button>		
-			<button onClick="showOptions(OPTIONS.hospital)" 	id="hospital_btn">Hospital</button>
-			<button onClick="showOptions(OPTIONS.bank)" 		id="bank_btn">Bank</button>
-			<button onClick="showOptions(OPTIONS.church)" 		id="church_btn">Church</button>
-			<button onClick="showOptions(OPTIONS.streets)" 		id="church_btn">Streets</button>
-			<button onClick="showOptions(OPTIONS.house)" 		id="church_btn">House</button>
-			<button onClick="showOptions(OPTIONS.prison)" 		id="church_btn">Prison</button>
+			<button onClick="showOptions(OPTIONS.gym)">Gym</button>
+			<button onClick="showOptions(OPTIONS.school)">School</button>
+			<button onClick="showOptions(OPTIONS.restaurant)">Restaurant</button>
+			<button onClick="showOptions(OPTIONS.company)">Company</button>
+			<button onClick="showOptions(OPTIONS.hospital)">Hospital</button>
+			<button onClick="showOptions(OPTIONS.bank)">Bank</button>
+			<button onClick="showOptions(OPTIONS.church)">Church</button>
+			<button onClick="showOptions(OPTIONS.streets)">Streets</button>
+			<button onClick="showOptions(OPTIONS.house)">House</button>
+			<button onClick="showOptions(OPTIONS.prison)">Prison</button>
 		</div>
-		
+
 		<div id="gym_options" style="display:none;">
 			<h2>Gym</h2>
 			<p>Add damage by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.train)" id="train_btn">Train</button>
 			<button onClick="hideOptions(OPTIONS.gym)">Cancel</button>
-		</div>	
+		</div>
 		<div id="school_options" style="display:none;">
 			<h2>School</h2>
 			<p>Add int by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.study)" id="study_btn">Study</button>
 			<button onClick="hideOptions(OPTIONS.school)">Cancel</button>
-		</div>	
+		</div>
 		<div id="restaurant_options" style="display:none;">
 			<h2>Restaurant</h2>
 			<p>Add max hp by 1. Cost is 5 gold</p>
 			<button onClick="process(ACTIONS.eat)">Eat</button>
 			<button onClick="hideOptions(OPTIONS.restaurant)">Cancel</button>
-		</div>		
+		</div>
 		<div id="company_options" style="display:none;">
 			<h2>Company</h2>
 			<p>Add gold by 5. Req int is 3</p>
 			<button onClick="process(ACTIONS.work)">Work</button>
 			<button onClick="hideOptions(OPTIONS.company)">Cancel</button>
-		</div>		
+		</div>
 		<div id="hospital_options" style="display:none;">
 			<h2>Hospital</h2>
 			<p>Restore HP</p>
 			<button onClick="process(ACTIONS.heal)">Heal</button>
 			<button onClick="hideOptions(OPTIONS.hospital)">Cancel</button>
-		</div>	
+		</div>
 		<div id="bank_options" style="display:none;">
 			<h2>Bank</h2>
 			<p>Rob. Deposit or Withdraw</p>
@@ -298,13 +324,13 @@ function attackPlayer(target){
 			<button onClick="process(ACTIONS.deposit)">Deposit</button>
 			<button onClick="process(ACTIONS.withdraw)">Withdraw</button>
 			<button onClick="hideOptions(OPTIONS.bank)">Cancel</button>
-		</div>		
+		</div>
 		<div id="church_options" style="display:none;">
 			<h2>Church</h2>
 			<p>Pray</p>
 			<button onClick="process(ACTIONS.pray)">Pray</button>
 			<button onClick="hideOptions(OPTIONS.church)">Cancel</button>
-		</div>		
+		</div>
 		<div id="streets_options" style="display:none;">
 			<h2>Streets</h2>
 			<p>Beg</p>
@@ -312,25 +338,25 @@ function attackPlayer(target){
 			<button onClick="hideOptions(OPTIONS.streets)">Cancel</button>
 		</div>
 		<div id="house_options" style="display:none;">
-			<h2>house</h2>
+			<h2>House</h2>
 			<p>Sleep</p>
 			<button onClick="process(ACTIONS.sleep)">Sleep</button>
 			<button onClick="hideOptions(OPTIONS.house)">Cancel</button>
 		</div>
 		<div id="prison_options" style="display:none;">
-			<h2>prison</h2>
+			<h2>Prison</h2>
 			<p>Escape</p>
 			<button onClick="process(ACTIONS.escape)">Escape</button>
 			<button onClick="hideOptions(OPTIONS.prison)">Cancel</button>
 		</div>
-		
+
 		<div id="allplayers" class="center"></div>
-		
+
 		<br /><hr/><br />
 		<button onClick="showMenu()">Menu</button>
 		<br /><br />
 	</div>
-  
+
   </div>
 </div>
 
