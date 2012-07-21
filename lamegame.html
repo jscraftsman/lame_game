@@ -52,6 +52,7 @@
   6. display the action of the previous player
   7. withdraw should not cause energy
   8. change the alert message to a more fun text
+  9. bug when all players are on the jail
 	*/
 	///-------------------------------------------------------///
 
@@ -72,7 +73,7 @@
 		"WORK_REQ_INT"  : 3,
 		"ROB_GAIN" 		  : 20,
 		"ROB_CHANCE" 	  : 30,
-		"PRAY_CHANCE"   : 10,
+		"PRAY_CHANCE"   : 220,
 		"ESCAPE_CHANCE" : 10,
 		"BEG_CHANCE" 	  : 50,
 		"BEG_GAIN" 	    : 5,
@@ -136,6 +137,9 @@ function setNextPlayer(){
       alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
       PLAYERS[CURRENT_PLAYER].turn_wait--;
       cyclePlayer();
+    }
+    if(PLAYERS[CURRENT_PLAYER].pray_wait > 0){
+      PLAYERS[CURRENT_PLAYER].pray_wait--;
     }
 		showAllPlayers();
 		showWhosTurn();
@@ -237,6 +241,32 @@ function process(action){
     }else{
       alert("Why would you try to escape when you are not even in a prison?!");
     }
+    break;
+    case ACTIONS.pray:
+      if(PLAYERS[CURRENT_PLAYER].pray_wait <= 0){
+        if(success(SETTINGS.PRAY_CHANCE)){
+          var number = RandomNumber();
+          var stat_gain = "";
+          if(number < 33){
+            PLAYERS[CURRENT_PLAYER].damage++;
+            stat_gain = "damage";
+          }else if((number >= 33) && (number < 66)){
+            PLAYERS[CURRENT_PLAYER].intelligence++;
+            stat_gain = "intelligence";
+          }else{
+            PLAYERS[CURRENT_PLAYER].current_hp++;
+            PLAYERS[CURRENT_PLAYER].max_hp++;
+            stat_gain = "hp";
+          }
+          alert("Your prayed was heard! You gained additional " + stat_gain + "!");
+        }else{
+          alert("Your prayer was not heard! Try to be sincere next time.");
+        }
+        PLAYERS[CURRENT_PLAYER].pray_wait = SETTINGS.PRAY_WAIT;
+        setNextPlayer();
+      }else{
+        alert("You can't pray yet!");
+      }
     break;
 	}
 }
