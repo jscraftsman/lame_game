@@ -41,13 +41,11 @@
     #buttons button{
       width: 100%;
     }
-    #options_and_current_player_container span{
-      width: 49%;
-			display: inline-table;
-    }
     #buttons{
+      width: 145px;
     }
-    #current_player_container{
+    #buttons table{
+      border-spacing:5px 5px;
     }
 	</style>
 
@@ -374,7 +372,7 @@ function showPlayerTextList(){
 	document.getElementById("playerlist").innerHTML = output;
 }
 function showAllPlayers(){
-	var output = "<br /><hr /><br />";
+  var output = "<br /><br />";
 	for(var index = 0; index < PLAYERS.length; index++){
 		output += "<span><table border='1' class='center'><tr><th class='center' colspan='2'> " + PLAYERS[index].name + "</th></tr>";
 		output += "<tr><td>Gold: " + PLAYERS[index].gold + "</td><td>DMG: " + PLAYERS[index].damage + "</td></tr>";
@@ -435,10 +433,8 @@ function proccessAttackResult(target){
 
 <div class="container">
   <div class="content">
-    <span>
-    <small id="header">Lame Game v0.1</small>
-    <h1 id="message">Welcome!</h1>
-    </span>
+    <div><small id="header">Lame Game v0.1</small></div>
+    <div><h1 id="message">Welcome!</h1></div>
     <div id="main_menu_container" class="center">
 		<button onClick="addPlayer()">Add Player</button><br />
 		<button onClick="startGame()">Start Game</button>
@@ -451,8 +447,7 @@ function proccessAttackResult(target){
 
 
 	<div id="ingame_menu_container" class="center" style="display:none;">
-    <div id="options_and_current_player_container" class="center">
-      <span id="buttons">
+      <div id="buttons" class="center">
         <table>
           <tr><th colspan="2" class="center">Options</th></tr>
           <tr>
@@ -476,11 +471,9 @@ function proccessAttackResult(target){
             <td><button onClick="showOptions(OPTIONS.prison)"     id="prison_btn">Prison</button></td>
           </tr>
         </table>
-      </span>
-
     </div>
 
-  <hr />
+  <br />
 
 		<div id="gym_options" style="display:none;">
 			<h2>Gym</h2>
@@ -548,7 +541,7 @@ function proccessAttackResult(target){
 
 		<div id="allplayers" class="center"></div>
 
-		<br /><hr/><br />
+		<br />
 		<button onClick="showMenu()">Menu</button>
 		<br /><br />
 	</div>
