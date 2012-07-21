@@ -143,17 +143,17 @@ function setNextPlayer(){
     alert("Game over! " + PLAYERS[CURRENT_PLAYER].name + " won!");
     showMenu();
   }else{
+    showAllBtn();
     PLAYERS[CURRENT_PLAYER].energy--;
     if(PLAYERS[CURRENT_PLAYER].energy <= 0){
       PLAYERS[CURRENT_PLAYER].energy = (PLAYERS[CURRENT_PLAYER].intelligence >= 6 ? 2 :1);
-      cyclePlayer();
-      if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
-        alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
-        PLAYERS[CURRENT_PLAYER].turn_wait--;
-        cyclePlayer();
-      }
       if(PLAYERS[CURRENT_PLAYER].pray_wait > 0){
         PLAYERS[CURRENT_PLAYER].pray_wait--;
+      }
+      cyclePlayer();
+      if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+        showOnlyOneBtn("prison");
+        alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
       }
       showAllPlayers();
       showWhosTurn();
@@ -162,50 +162,60 @@ function setNextPlayer(){
       showAllPlayers();
     }
   }
-
 }
+
 function notEnough(stat){
 	alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough " + stat + "!");
 }
+function showOnlyOneBtn(selected){
+	for(option in OPTIONS){
+		document.getElementById(option + "_btn").style.display = ( (option == selected) ? "inline-block" : "none");
+	}
+}
+function showAllBtn(){
+	for(option in OPTIONS){
+		document.getElementById(option + "_btn").style.display ="block";
+	}
+}
 function process(action){
   showOnlyOneOption("");
-	switch(action){
-		case ACTIONS.train:
-			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.TRAIN_COST){
-				PLAYERS[CURRENT_PLAYER].damage++;
-				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.TRAIN_COST;
-				setNextPlayer();
-			}else{
+  switch(action){
+    case ACTIONS.train:
+      if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.TRAIN_COST){
+        PLAYERS[CURRENT_PLAYER].damage++;
+        PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.TRAIN_COST;
+        setNextPlayer();
+      }else{
         notEnough("gold");
       }
-		break;
-		case ACTIONS.study:
-			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.STUDY_COST){
-				PLAYERS[CURRENT_PLAYER].intelligence++;
-				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.STUDY_COST;
-				setNextPlayer();
-			}else{
+      break;
+    case ACTIONS.study:
+      if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.STUDY_COST){
+        PLAYERS[CURRENT_PLAYER].intelligence++;
+        PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.STUDY_COST;
+        setNextPlayer();
+      }else{
         notEnough("gold");
-			}
-		break;
-		case ACTIONS.eat:
-			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.EAT_COST){
-				PLAYERS[CURRENT_PLAYER].current_hp++;
-				PLAYERS[CURRENT_PLAYER].max_hp++;
-				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.EAT_COST;
-				setNextPlayer();
-			}else{
+      }
+      break;
+    case ACTIONS.eat:
+      if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.EAT_COST){
+        PLAYERS[CURRENT_PLAYER].current_hp++;
+        PLAYERS[CURRENT_PLAYER].max_hp++;
+        PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.EAT_COST;
+        setNextPlayer();
+      }else{
         notEnough("gold");
-			}
-		break;
-		case ACTIONS.work:
-			if(PLAYERS[CURRENT_PLAYER].intelligence >= SETTINGS.WORK_REQ_INT){
-				PLAYERS[CURRENT_PLAYER].gold += SETTINGS.WORK_EARN;
-				setNextPlayer();
-			}else{
+      }
+      break;
+    case ACTIONS.work:
+      if(PLAYERS[CURRENT_PLAYER].intelligence >= SETTINGS.WORK_REQ_INT){
+        PLAYERS[CURRENT_PLAYER].gold += SETTINGS.WORK_EARN;
+        setNextPlayer();
+      }else{
         notEnough("int");
-			}
-		break;
+      }
+      break;
     case ACTIONS.rob:
       if(success(SETTINGS.ROB_CHANCE)){
         PLAYERS[CURRENT_PLAYER].bank += SETTINGS.ROB_GAIN;
@@ -215,8 +225,8 @@ function process(action){
         PLAYERS[CURRENT_PLAYER].gold = 0;
         alert("You were caught!");
       }
-			setNextPlayer();
-    break;
+      setNextPlayer();
+      break;
     case ACTIONS.deposit:
       var gold_input = getGold("", action);
       if(gold_input != -1){
@@ -224,7 +234,7 @@ function process(action){
         PLAYERS[CURRENT_PLAYER].bank += gold_input;
         setNextPlayer();
       }
-		break;
+      break;
     case ACTIONS.withdraw:
       var gold_input = getGold("", action);
       if(gold_input != -1){
@@ -232,32 +242,34 @@ function process(action){
         PLAYERS[CURRENT_PLAYER].bank -= gold_input;
         showAllPlayers();
       }
-		break;
+      break;
     case ACTIONS.sleep:
       setNextPlayer();
-    break;
+      break;
     case ACTIONS.beg:
       if(success(SETTINGS.BEG_CHANCE)){
         PLAYERS[CURRENT_PLAYER].bank += SETTINGS.BEG_GAIN;
-        alert("Someone gave you gold!");
+        alert("Someone gave you gold! Nice!");
       }else{
-        alert("Nobody gave you anything!");
+        alert("How sad! nobody gave you anything! Try to work on your charms");
       }
-			setNextPlayer();
-    break;
+      setNextPlayer();
+      break;
     case ACTIONS.escape:
-    if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
-      if(success(SETTINGS.ESCAPE_CHANCE)){
-        PLAYERS[CURRENT_PLAYER].turn_wait = 0;
-        alert("You were able to escape!");
+      if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+        if(success(SETTINGS.ESCAPE_CHANCE)){
+          PLAYERS[CURRENT_PLAYER].turn_wait = 0;
+          alert("You are like a ninja! you were able to escape!");
+        }else{
+          alert("You failed to escape! Such a loser!");
+          PLAYERS[CURRENT_PLAYER].turn_waiti++;
+          setNextPlayer();
+        }
+        PLAYERS[CURRENT_PLAYER].turn_wait--;
       }else{
-        alert("You failed to escape!");
-        setNextPlayer();
+        alert("Why would you try to escape when you are not even in a prison?!");
       }
-    }else{
-      alert("Why would you try to escape when you are not even in a prison?!");
-    }
-    break;
+      break;
     case ACTIONS.pray:
       if(PLAYERS[CURRENT_PLAYER].pray_wait <= 0){
         if(success(SETTINGS.PRAY_CHANCE)){
@@ -283,12 +295,12 @@ function process(action){
       }else{
         alert("You can't pray yet!");
       }
-    break;
+      break;
     case ACTIONS.heal:
       PLAYERS[CURRENT_PLAYER].current_hp = PLAYERS[CURRENT_PLAYER].max_hp;
       setNextPlayer();
       break;
-	}
+  }
 }
 function getGold(msg, action){
   var gold = prompt(msg + "Enter gold:", "0");
@@ -428,17 +440,50 @@ function proccessAttackResult(target){
 
 
 	<div id="ingame_menu_container" class="center" style="display:none;">
-		<div id="buttons">
-			<button onClick="showOptions(OPTIONS.gym)">Gym</button>
-			<button onClick="showOptions(OPTIONS.school)">School</button>
-			<button onClick="showOptions(OPTIONS.restaurant)">Restaurant</button>
-			<button onClick="showOptions(OPTIONS.company)">Company</button>
-			<button onClick="showOptions(OPTIONS.hospital)">Hospital</button>
-			<button onClick="showOptions(OPTIONS.bank)">Bank</button>
-			<button onClick="showOptions(OPTIONS.church)">Church</button>
-			<button onClick="showOptions(OPTIONS.streets)">Streets</button>
-			<button onClick="showOptions(OPTIONS.house)">House</button>
-			<button onClick="showOptions(OPTIONS.prison)">Prison</button>
+    <div id="buttons">
+      <table>
+        <tr><th colspan="2" class="center">Options</th></tr>
+        <tr>
+          <td>
+            <button onClick="showOptions(OPTIONS.gym)"        id="gym_btn">Gym</button>
+          </td>
+          <td>
+            <button onClick="showOptions(OPTIONS.school)"     id="school_btn">School</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick="showOptions(OPTIONS.restaurant)" id="restaurant_btn">Restaurant</button>
+          </td>
+          <td>
+            <button onClick="showOptions(OPTIONS.company)"    id="company_btn">Company</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick="showOptions(OPTIONS.hospital)"   id="hospital_btn">Hospital</button>
+          </td>
+          <td>
+            <button onClick="showOptions(OPTIONS.bank)"       id="bank_btn">Bank</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick="showOptions(OPTIONS.church)"     id="church_btn">Church</button>
+          </td>
+          <td>
+            <button onClick="showOptions(OPTIONS.streets)"    id="streets_btn">Streets</button>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <button onClick="showOptions(OPTIONS.house)"      id="house_btn">House</button>
+          </td>
+          <td>
+            <button onClick="showOptions(OPTIONS.prison)"     id="prison_btn">Prison</button>
+          </td>
+        </tr>
+    </table>
 		</div>
 
 		<div id="gym_options" style="display:none;">
@@ -500,6 +545,7 @@ function proccessAttackResult(target){
 		<div id="prison_options" style="display:none;">
 			<h2>Prison</h2>
 			<p>Escape</p>
+			<button onClick="process(ACTIONS.sleep)">Sleep</button>
 			<button onClick="process(ACTIONS.escape)">Escape</button>
 			<button onClick="hideOptions(OPTIONS.prison)">Cancel</button>
 		</div>
