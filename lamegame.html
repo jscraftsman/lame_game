@@ -148,7 +148,7 @@ function cyclePlayer(){
     }
 }
 function setNextPlayer(){
-  if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.GOLD_TO_WIN){
+  if((PLAYERS[CURRENT_PLAYER].gold + PLAYERS[CURRENT_PLAYER].bank) >= SETTINGS.GOLD_TO_WIN){
     alert("Game over! " + PLAYERS[CURRENT_PLAYER].name + " won!");
     showMenu();
   }else{
@@ -253,6 +253,9 @@ function process(action){
       }
       break;
     case ACTIONS.sleep:
+      if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+        PLAYERS[CURRENT_PLAYER].turn_wait--;
+      }
       setNextPlayer();
       break;
     case ACTIONS.beg:
