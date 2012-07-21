@@ -46,10 +46,9 @@
 	@TODO:
 	1. allow only a unique name
 	2. fix the "Uncaught TypeError: Cannot read property 'length' of null " - when you cancel adding player
-  3. when you press menu->start the stats should be reset
-  4. display the action of the previous player
-  5. change the alert message to a more fun text
-  6. bug when all players are on the jail
+  3. display the action of the previous player
+  4. change the alert message to a more fun text
+  5. bug when all players are on the jail
 	*/
 	///-------------------------------------------------------///
 
@@ -109,16 +108,29 @@
 
 
 function startGame(){
-	if (PLAYERS.length < 2){
-		alert("Please add at least two player!");
-	}else{
-		CURRENT_PLAYER = 0;
-		showAllPlayers();
-		document.getElementById("main_menu_container").style.display = "none";
-		document.getElementById("ingame_menu_container").style.display = "block";
+  if (PLAYERS.length < 2){
+    alert("Please add at least two player!");
+  }else{
+    resetPlayerStats();
+    CURRENT_PLAYER = 0;
+    showAllPlayers();
+    document.getElementById("main_menu_container").style.display = "none";
+    document.getElementById("ingame_menu_container").style.display = "block";
     showWhosTurn();
-	}
-
+  }
+}
+function resetPlayerStats(){
+  for(var current = 0; current < PLAYERS.length; current++){
+		PLAYERS[current].gold	        = SETTINGS.DEFAULT_GOLD;
+		PLAYERS[current].damage 		  = SETTINGS.DEFAULT_DAMAGE;
+		PLAYERS[current].current_hp	  = SETTINGS.DEFAULT_HP;
+		PLAYERS[current].max_hp	      = SETTINGS.DEFAULT_HP;
+		PLAYERS[current].intelligence	= SETTINGS.DEFAULT_INT;
+		PLAYERS[current].bank			    = SETTINGS.DEFAULT_BANK;
+		PLAYERS[current].pray_wait    = 0;
+		PLAYERS[current].turn_wait    = 0;
+    PLAYERS[current].energy       = SETTINGS.DEFAULT_ENERGY;
+  }
 }
 function cyclePlayer(){
 		CURRENT_PLAYER++;
