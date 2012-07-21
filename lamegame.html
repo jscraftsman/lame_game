@@ -38,6 +38,17 @@
       width: 49%;
 			display: inline-block;
 		}
+    #buttons button{
+      width: 100%;
+    }
+    #options_and_current_player_container span{
+      width: 49%;
+			display: inline-table;
+    }
+    #buttons{
+    }
+    #current_player_container{
+    }
 	</style>
 
 <script type="text/javascript">
@@ -440,51 +451,36 @@ function proccessAttackResult(target){
 
 
 	<div id="ingame_menu_container" class="center" style="display:none;">
-    <div id="buttons">
-      <table>
-        <tr><th colspan="2" class="center">Options</th></tr>
-        <tr>
-          <td>
-            <button onClick="showOptions(OPTIONS.gym)"        id="gym_btn">Gym</button>
-          </td>
-          <td>
-            <button onClick="showOptions(OPTIONS.school)"     id="school_btn">School</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick="showOptions(OPTIONS.restaurant)" id="restaurant_btn">Restaurant</button>
-          </td>
-          <td>
-            <button onClick="showOptions(OPTIONS.company)"    id="company_btn">Company</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick="showOptions(OPTIONS.hospital)"   id="hospital_btn">Hospital</button>
-          </td>
-          <td>
-            <button onClick="showOptions(OPTIONS.bank)"       id="bank_btn">Bank</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick="showOptions(OPTIONS.church)"     id="church_btn">Church</button>
-          </td>
-          <td>
-            <button onClick="showOptions(OPTIONS.streets)"    id="streets_btn">Streets</button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button onClick="showOptions(OPTIONS.house)"      id="house_btn">House</button>
-          </td>
-          <td>
-            <button onClick="showOptions(OPTIONS.prison)"     id="prison_btn">Prison</button>
-          </td>
-        </tr>
-    </table>
-		</div>
+    <div id="options_and_current_player_container" class="center">
+      <span id="buttons">
+        <table>
+          <tr><th colspan="2" class="center">Options</th></tr>
+          <tr>
+            <td><button onClick="showOptions(OPTIONS.gym)"        id="gym_btn">Gym</button></td>
+            <td><button onClick="showOptions(OPTIONS.school)"     id="school_btn">School</button></td>
+          </tr>
+          <tr>
+            <td><button onClick="showOptions(OPTIONS.restaurant)" id="restaurant_btn">Restaurant</button></td>
+            <td><button onClick="showOptions(OPTIONS.company)"    id="company_btn">Company</button></td>
+          </tr>
+          <tr>
+            <td><button onClick="showOptions(OPTIONS.hospital)"   id="hospital_btn">Hospital</button></td>
+            <td><button onClick="showOptions(OPTIONS.bank)"       id="bank_btn">Bank</button></td>
+          </tr>
+          <tr>
+            <td><button onClick="showOptions(OPTIONS.church)"     id="church_btn">Church</button></td>
+            <td><button onClick="showOptions(OPTIONS.streets)"    id="streets_btn">Streets</button></td>
+          </tr>
+          <tr>
+            <td><button onClick="showOptions(OPTIONS.house)"      id="house_btn">House</button></td>
+            <td><button onClick="showOptions(OPTIONS.prison)"     id="prison_btn">Prison</button></td>
+          </tr>
+        </table>
+      </span>
+
+    </div>
+
+  <hr />
 
 		<div id="gym_options" style="display:none;">
 			<h2>Gym</h2>
