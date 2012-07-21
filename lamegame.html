@@ -46,13 +46,10 @@
 	@TODO:
 	1. allow only a unique name
 	2. fix the "Uncaught TypeError: Cannot read property 'length' of null " - when you cancel adding player
-	3. complete the attack function
-  4. when you press menu->start the stats should be reset
-  5. player should not be able to attack himself
-  6. display the action of the previous player
-  7. withdraw should not cause energy
-  8. change the alert message to a more fun text
-  9. bug when all players are on the jail
+  3. when you press menu->start the stats should be reset
+  4. display the action of the previous player
+  5. change the alert message to a more fun text
+  6. bug when all players are on the jail
 	*/
 	///-------------------------------------------------------///
 
@@ -79,31 +76,32 @@
 		"BEG_GAIN" 	    : 5,
 		"PRAY_WAIT"		  : 2,
 		"TURN_WAIT"		  : 2,
+		"GOLD_TO_WIN"		: 50,
 		};
 	var OPTIONS = {
-		"gym" 		: "gym",
-		"school" 	: "school",
+		"gym" 		  : "gym",
+		"school" 	  : "school",
 		"company" 	: "company",
 		"restaurant": "restaurant",
 		"hospital" 	: "hospital",
-		"bank" 		: "bank",
-		"church" 	: "church",
+		"bank" 		  : "bank",
+		"church" 	  : "church",
 		"streets" 	: "streets",
-		"house" 	: "house",
-		"prison" 	: "prison"
+		"house" 	  : "house",
+		"prison" 	  : "prison"
 		};
 	var ACTIONS = {
-		"train" : "train",
-		"study" : "study",
-		"eat" : "eat",
-		"work" : "work",
-		"rob" : "rob",
+		"train"   : "train",
+		"study"   : "study",
+		"eat"     : "eat",
+		"work"    : "work",
+		"rob"     : "rob",
 		"deposit" : "deposit",
-		"withdraw" : "withdraw",
-		"beg" : "beg",
-		"pray" : "pray",
-		"escape" : "escape",
-		"sleep" : "sleep",
+		"withdraw": "withdraw",
+		"beg"     : "beg",
+		"pray"    : "pray",
+		"escape"  : "escape",
+		"sleep"   : "sleep",
 		};
 	var PLAYERS = [];
 	var CURRENT_PLAYER = 0;
@@ -129,30 +127,36 @@ function cyclePlayer(){
     }
 }
 function setNextPlayer(){
-	PLAYERS[CURRENT_PLAYER].energy--;
-	if(PLAYERS[CURRENT_PLAYER].energy <= 0){
-    PLAYERS[CURRENT_PLAYER].energy = (PLAYERS[CURRENT_PLAYER].intelligence >= 6 ? 2 :1);
-    cyclePlayer();
-    if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
-      alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
-      PLAYERS[CURRENT_PLAYER].turn_wait--;
+  if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.GOLD_TO_WIN){
+    alert("Game over! " + PLAYERS[CURRENT_PLAYER].name + " won!");
+    showMenu();
+  }else{
+    PLAYERS[CURRENT_PLAYER].energy--;
+    if(PLAYERS[CURRENT_PLAYER].energy <= 0){
+      PLAYERS[CURRENT_PLAYER].energy = (PLAYERS[CURRENT_PLAYER].intelligence >= 6 ? 2 :1);
       cyclePlayer();
+      if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+        alert(PLAYERS[CURRENT_PLAYER].name + " is still in jail");
+        PLAYERS[CURRENT_PLAYER].turn_wait--;
+        cyclePlayer();
+      }
+      if(PLAYERS[CURRENT_PLAYER].pray_wait > 0){
+        PLAYERS[CURRENT_PLAYER].pray_wait--;
+      }
+      showAllPlayers();
+      showWhosTurn();
+    }else{
+      alert("It's Still " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
+      showAllPlayers();
     }
-    if(PLAYERS[CURRENT_PLAYER].pray_wait > 0){
-      PLAYERS[CURRENT_PLAYER].pray_wait--;
-    }
-		showAllPlayers();
-		showWhosTurn();
-	}else{
-		alert("It's Still " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
-		showAllPlayers();
-	}
+  }
 
 }
 function notEnough(stat){
 	alert(PLAYERS[CURRENT_PLAYER].name + ", Not enough " + stat + "!");
 }
 function process(action){
+  showOnlyOneOption("");
 	switch(action){
 		case ACTIONS.train:
 			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.TRAIN_COST){
@@ -268,6 +272,10 @@ function process(action){
         alert("You can't pray yet!");
       }
     break;
+    case ACTIONS.heal:
+      PLAYERS[CURRENT_PLAYER].current_hp = PLAYERS[CURRENT_PLAYER].max_hp;
+      setNextPlayer();
+      break;
 	}
 }
 function getGold(msg, action){
