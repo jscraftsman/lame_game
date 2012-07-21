@@ -369,8 +369,21 @@ function addPlayer(){
 	}
  }
 function attackPlayer(target){
-	 PLAYERS[target].current_hp -= PLAYERS[CURRENT_PLAYER].damage;
-	 setNextPlayer();
+  if(target == CURRENT_PLAYER){
+    alert("Have you gone mad? why are you attacking yourself?");
+  }else{
+    PLAYERS[target].current_hp -= PLAYERS[CURRENT_PLAYER].damage;
+    proccessAttackResult(target);
+    setNextPlayer();
+  }
+}
+function proccessAttackResult(target){
+  if(PLAYERS[target].current_hp <= 0){
+    PLAYERS[target].current_hp = PLAYERS[target].max_hp;
+    PLAYERS[CURRENT_PLAYER].gold += PLAYERS[target].gold;
+    PLAYERS[target].gold = 0;
+    alert(PLAYERS[CURRENT_PLAYER].name + " defeated " + PLAYERS[target].name + " and looted him.");
+  }
 }
 </script>
 
