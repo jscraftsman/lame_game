@@ -147,7 +147,7 @@ function notEnough(stat){
 function process(action){
 	switch(action){
 		case ACTIONS.train:
-			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.TRAIN_COST){
+			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.TRAIN_COST){
 				PLAYERS[CURRENT_PLAYER].damage++;
 				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.TRAIN_COST;
 				setNextPlayer();
@@ -156,7 +156,7 @@ function process(action){
       }
 		break;
 		case ACTIONS.study:
-			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.STUDY_COST){
+			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.STUDY_COST){
 				PLAYERS[CURRENT_PLAYER].intelligence++;
 				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.STUDY_COST;
 				setNextPlayer();
@@ -165,7 +165,7 @@ function process(action){
 			}
 		break;
 		case ACTIONS.eat:
-			if(PLAYERS[CURRENT_PLAYER].gold > SETTINGS.EAT_COST){
+			if(PLAYERS[CURRENT_PLAYER].gold >= SETTINGS.EAT_COST){
 				PLAYERS[CURRENT_PLAYER].current_hp++;
 				PLAYERS[CURRENT_PLAYER].max_hp++;
 				PLAYERS[CURRENT_PLAYER].gold -= SETTINGS.EAT_COST;
@@ -184,7 +184,7 @@ function process(action){
 		break;
     case ACTIONS.rob:
       if(success(SETTINGS.ROB_CHANCE)){
-        PLAYERS[CURRENT_PLAYER].gold += SETTINGS.ROB_GAIN;
+        PLAYERS[CURRENT_PLAYER].bank += SETTINGS.ROB_GAIN;
         alert("Success!");
       }else{
         PLAYERS[CURRENT_PLAYER].turn_wait += SETTINGS.TURN_WAIT;
@@ -194,28 +194,40 @@ function process(action){
 			setNextPlayer();
     break;
     case ACTIONS.deposit:
-      var gold_input = getGold("");
+      var gold_input = getGold("", action);
       if(gold_input != -1){
         PLAYERS[CURRENT_PLAYER].gold -= gold_input;
         PLAYERS[CURRENT_PLAYER].bank += gold_input;
         setNextPlayer();
       }
 		break;
+    case ACTIONS.withdraw:
+      var gold_input = getGold("", action);
+      if(gold_input != -1){
+        PLAYERS[CURRENT_PLAYER].gold += gold_input;
+        PLAYERS[CURRENT_PLAYER].bank -= gold_input;
+        setNextPlayer();
+      }
+		break;
 	}
 }
-function getGold(msg){
+function getGold(msg, action){
   var gold = prompt(msg + "Enter gold:", "0");
+  var player_gold = PLAYERS[CURRENT_PLAYER].gold;
+  var player_bank = PLAYERS[CURRENT_PLAYER].bank;
   if(gold != null){
     gold *= 1;
     if(isNaN(gold) || gold < 0){
-      return getGold("Invalid input! Please try again, ");
-    }else if(PLAYERS[CURRENT_PLAYER].gold < gold){
-      return getGold("That's too much! Please try again, ");
+      return getGold("Invalid input! Please try again, ", action);
+    }else if((player_gold < gold) && action == ACTIONS.deposit){
+      return getGold("That's too much! Please try again, ", action);
+    }else if((player_bank < gold) && action == ACTIONS.withdraw){
+      return getGold("That's too much! Please try again, ", action);
     }else{
       if((gold % 5) == 0){
         return gold;
       }else{
-        return getGold("Gold should be divisible by 5, ");
+        return getGold("Gold should be divisible by 5, ", action);
       }
     }
   }else{
