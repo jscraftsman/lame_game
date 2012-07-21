@@ -50,6 +50,8 @@
   4. when you press menu->start the stats should be reset
   5. player should not be able to attack himself
   6. display the action of the previous player
+  7. withdraw should not cause energy
+  8. change the alert message to a more fun text
 	*/
 	///-------------------------------------------------------///
 
@@ -73,6 +75,7 @@
 		"PRAY_CHANCE"   : 10,
 		"ESCAPE_CHANCE" : 10,
 		"BEG_CHANCE" 	  : 50,
+		"BEG_GAIN" 	    : 5,
 		"PRAY_WAIT"		  : 2,
 		"TURN_WAIT"		  : 2,
 		};
@@ -138,6 +141,7 @@ function setNextPlayer(){
 		showWhosTurn();
 	}else{
 		alert("It's Still " + PLAYERS[CURRENT_PLAYER].name + "'s turn");
+		showAllPlayers();
 	}
 
 }
@@ -206,9 +210,34 @@ function process(action){
       if(gold_input != -1){
         PLAYERS[CURRENT_PLAYER].gold += gold_input;
         PLAYERS[CURRENT_PLAYER].bank -= gold_input;
-        setNextPlayer();
+        showAllPlayers();
       }
 		break;
+    case ACTIONS.sleep:
+      setNextPlayer();
+    break;
+    case ACTIONS.beg:
+      if(success(SETTINGS.BEG_CHANCE)){
+        PLAYERS[CURRENT_PLAYER].bank += SETTINGS.BEG_GAIN;
+        alert("Someone gave you gold!");
+      }else{
+        alert("Nobody gave you anything!");
+      }
+			setNextPlayer();
+    break;
+    case ACTIONS.escape:
+    if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
+      if(success(SETTINGS.ESCAPE_CHANCE)){
+        PLAYERS[CURRENT_PLAYER].turn_wait = 0;
+        alert("You were able to escape!");
+      }else{
+        alert("You failed to escape!");
+        setNextPlayer();
+      }
+    }else{
+      alert("Why would you try to escape when you are not even in a prison?!");
+    }
+    break;
 	}
 }
 function getGold(msg, action){
