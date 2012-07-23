@@ -47,6 +47,9 @@
     #buttons table{
       border-spacing:5px 5px;
     }
+	#current_player_table{
+		background: aliceBlue;
+	}
 	</style>
 
 <script type="text/javascript">
@@ -381,7 +384,7 @@ function showPlayerTextList(){
 function showAllPlayers(){
   var output = "<br /><br />";
 	for(var index = 0; index < PLAYERS.length; index++){
-		output += "<span><table border='1' class='center'><tr><th class='center' colspan='2'> " + PLAYERS[index].name + "</th></tr>";
+		output += "<span><table border='1' class='center' id =" + ( (CURRENT_PLAYER == index) ? "current_player_table" : "" )+ "><tr><th class='center' colspan='2'> " + PLAYERS[index].name + "</th></tr>";
 		output += "<tr><td>Gold: " + PLAYERS[index].gold + "</td><td>DMG: " + PLAYERS[index].damage + "</td></tr>";
 		output += "<tr><td>Bank: " + PLAYERS[index].bank + "</td><td>INT: " + PLAYERS[index].intelligence + "</td></tr>";
 		output += "<tr><td class='center' colspan='2'>HP: " + PLAYERS[index].current_hp + "/" + PLAYERS[index].max_hp + " </td></tr>";
@@ -460,7 +463,7 @@ function hackBank(target){
 
 <div class="container">
   <div class="content">
-    <div><small id="header">Lame Game v0.1</small></div>
+    <div><small id="header">Lame Game v0.2</small></div>
     <div><h1 id="message">Welcome!</h1></div>
     <div id="main_menu_container" class="center">
 		<button onClick="addPlayer()">Add Player</button><br />
