@@ -84,6 +84,7 @@
 		"BEG_GAIN" 	    : 5,
 		"PRAY_WAIT"		  : 2,
 		"TURN_WAIT"		  : 2,
+		"HACK_CAUGHT_CHANCE"		  : 70,
 		"GOLD_TO_WIN"		: 50,
 		};
 	var OPTIONS = {
@@ -126,6 +127,7 @@ function startGame(){
     document.getElementById("main_menu_container").style.display = "none";
     document.getElementById("ingame_menu_container").style.display = "block";
     showWhosTurn();
+	showAllBtn();
   }
 }
 function resetPlayerStats(){
@@ -386,6 +388,7 @@ function showAllPlayers(){
 		output += "<tr><td class='center' colspan='2'>Energy: " + PLAYERS[index].energy + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'>Pray wait: " + PLAYERS[index].pray_wait + " </td></tr>";
 		output += "<tr><td class='center' colspan='2'>Turn wait: " + PLAYERS[index].turn_wait + " </td></tr>";
+		output += "<tr><td class='center' colspan='2'><button onClick='hackBank(" + index + ")'>Hack</button></td></tr>";
 		output += "<tr><td class='center' colspan='2'><button onClick='attackPlayer(" + index + ")'>Attack</button></td></tr>";
 		output += "</table></span>";
 	}
@@ -430,6 +433,25 @@ function proccessAttackResult(target){
     PLAYERS[target].gold = 0;
     alert(PLAYERS[CURRENT_PLAYER].name + " defeated " + PLAYERS[target].name + " and looted him.");
   }
+}
+function hackBank(target){
+	if(target == CURRENT_PLAYER){
+		alert("Have you gone mad? why are you hacking your own bank?");
+	}else{
+		if(success( (PLAYERS[CURRENT_PLAYER].intelligence * 10) )){
+			PLAYERS[CURRENT_PLAYER].bank += PLAYERS[target].bank;
+			PLAYERS[target].bank = 0;
+			alert(PLAYERS[CURRENT_PLAYER].name + " stole gold from " + PLAYERS[target].name + "'s bank!");
+		}else{
+			if(success(SETTINGS.HACK_CAUGHT_CHANCE)){
+				PLAYERS[CURRENT_PLAYER].turn_wait = SETTINGS.TURN_WAIT;
+				alert("Your were caught!")
+			}
+	}
+	setNextPlayer();
+	}
+	
+	
 }
 </script>
 
