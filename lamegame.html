@@ -77,9 +77,9 @@
 		"WORK_EARN" 	  : 5,
 		"WORK_REQ_INT"  : 3,
 		"ROB_GAIN" 		  : 20,
-		"ROB_CHANCE" 	  : 30,
-		"PRAY_CHANCE"   : 220,
-		"ESCAPE_CHANCE" : 10,
+		"ROB_CHANCE" 	  : 20,
+		"PRAY_CHANCE"   : 20,
+		"ESCAPE_CHANCE" : 20,
 		"BEG_CHANCE" 	  : 50,
 		"BEG_GAIN" 	    : 5,
 		"PRAY_WAIT"		  : 2,
@@ -270,8 +270,10 @@ function process(action){
     case ACTIONS.escape:
       if(PLAYERS[CURRENT_PLAYER].turn_wait > 0){
         if(success(SETTINGS.ESCAPE_CHANCE)){
-          PLAYERS[CURRENT_PLAYER].turn_wait = 0;
           alert("You are like a ninja! you were able to escape!");
+		  PLAYERS[CURRENT_PLAYER].turn_wait = 0;
+		  showAllPlayers();
+		  showAllBtn();
         }else{
           alert("You failed to escape! Such a loser!");
           PLAYERS[CURRENT_PLAYER].turn_waiti++;
